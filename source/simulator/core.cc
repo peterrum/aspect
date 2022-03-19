@@ -107,7 +107,8 @@ namespace aspect
                                                  const InitialTopographyModel::Interface<dim> &initial_topography_model)
     {
       if (geometry_model.has_curved_elements())
-        return std::make_unique<MappingQCache<dim>>(4);
+        return std::make_unique<MappingQ<dim>>(4);
+
       if (Plugins::plugin_type_matches<const InitialTopographyModel::ZeroTopography<dim>>(initial_topography_model))
         return std::make_unique<MappingCartesian<dim>>();
 
@@ -201,6 +202,7 @@ namespace aspect
     // refined_island is at a periodic boundary. This flag is not too
     // important as it does not improve accuracy. Otherwise, these flags
     // correspond to smoothing_on_refinement|smoothing_on_coarsening.
+    /*
     triangulation (mpi_communicator,
                    typename Triangulation<dim>::MeshSmoothing
                    (
@@ -218,6 +220,8 @@ namespace aspect
                      parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy)
                     :
                     parallel::distributed::Triangulation<dim>::mesh_reconstruction_after_repartitioning)),
+    */
+    triangulation (mpi_communicator, Triangulation<dim>::limit_level_difference_at_vertices, parallel::distributed::Triangulation<dim>::construct_multigrid_hierarchy),
 
     mapping(construct_mapping<dim>(*geometry_model,*initial_topography_model)),
 
